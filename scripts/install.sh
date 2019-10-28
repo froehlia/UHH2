@@ -95,7 +95,7 @@ KERNEL=$(uname -r)
 if [[ "$KERNEL" == *el7* ]]; then
 	export SCRAM_ARCH=slc7_amd64_gcc700
 fi
-CMSREL=CMSSW_10_2_10
+CMSREL=CMSSW_10_2_16
 eval `cmsrel ${CMSREL}`
 cd ${CMSREL}/src
 eval `scramv1 runtime -sh`
@@ -112,6 +112,9 @@ time git cms-init -y  # not needed if not addpkg ing
 
 # Necessary for using our FastJet
 time git cms-addpkg RecoJets/JetProducers
+# For JetCorrector, JetResolution objects
+time git cms-addpkg CondFormats/JetMETObjects
+time git cms-addpkg JetMETCorrections/Modules
 
 # Update FastJet and contribs for HOTVR and UniversalJetCluster
 FJINSTALL=$(fastjet-config --prefix)
@@ -136,8 +139,9 @@ scram setup fastjet-contrib-archive
 scram b clean
 time scram b $MAKEFLAGS
 
-# Get the UHH2 repo & JEC files
+# Get the UHH2 repo & JEC,JER files
 cd $CMSSW_BASE/src
-time git clone -b RunII_102X_v1 https://github.com/UHH2/UHH2.git
+time git clone -b RunII_102X_v2 https://github.com/UHH2/UHH2.git
 cd UHH2
 time git clone https://github.com/cms-jet/JECDatabase.git
+time git clone https://github.com/cms-jet/JRDatabase.git
